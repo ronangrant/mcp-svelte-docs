@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "svelte5docs": {
+      "command": "/usr/local/bin/node",
+      "args": [
+        "/path/to/your/mcp-svelte-docs/build/index.js"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "your-openai-api-key",
+        "CUSTOM_DOCS_URL": "https://your-custom-docs-url.com/docs.txt"
+      }
+    },
+    "svelte5docs-npx": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@ronangrant/mcp-svelte-docs"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "your-openai-api-key",
+        "CUSTOM_DOCS_URL": "https://your-custom-docs-url.com/docs.txt"
+      }
+    }
+  }
+} 

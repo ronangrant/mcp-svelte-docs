@@ -1,0 +1,55 @@
+{
+  "name": "@ronangrant/mcp-svelte-docs",
+  "version": "0.1.0",
+  "description": "A Model Context Protocol server for searching Svelte 5 documentation using OpenAI's Retrieval API",
+  "private": false,
+  "type": "module",
+  "bin": {
+    "mcp-svelte-docs": "./build/index.js"
+  },
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js",
+    "start": "node build/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "rag",
+    "svelte",
+    "svelte5",
+    "documentation",
+    "openai",
+    "claude",
+    "llm"
+  ],
+  "author": "Ronan Grant",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronangrant/mcp-svelte-docs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ronangrant/mcp-svelte-docs/issues"
+  },
+  "homepage": "https://github.com/ronangrant/mcp-svelte-docs#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "0.6.0",
+    "axios": "^1.7.9",
+    "openai": "^4.76.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
