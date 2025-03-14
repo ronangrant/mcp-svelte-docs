@@ -33,7 +33,7 @@ If you want to clone and build from source:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ronangrant/mcp-svelte-docs2.git
+   git clone https://github.com/ronangrant/mcp-svelte-docs.git
    cd mcp-svelte-docs
    ```
 

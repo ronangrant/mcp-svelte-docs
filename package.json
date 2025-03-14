@@ -34,12 +34,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ronangrant/mcp-svelte-docs2.git"
+    "url": "git+https://github.com/ronangrant/mcp-svelte-docs.git"
   },
   "bugs": {
-    "url": "https://github.com/ronangrant/mcp-svelte-docs2/issues"
+    "url": "https://github.com/ronangrant/mcp-svelte-docs/issues"
   },
-  "homepage": "https://github.com/ronangrant/mcp-svelte-docs2#readme",
+  "homepage": "https://github.com/ronangrant/mcp-svelte-docs#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "0.6.0",
     "axios": "^1.7.9",
