@@ -9,20 +9,60 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { OpenAIRetrieval } from './openai-retrieval-fixed.js';
 
-// Environment variables for configuration
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-// Add support for additional environment variables
-const CUSTOM_DOCS_URL = process.env.CUSTOM_DOCS_URL; // Optional custom documentation URL
+// Parse command line arguments
+const args = process.argv.slice(2);
+const argMap: Record<string, string> = {};
+
+// Process command line arguments
+args.forEach(arg => {
+  if (arg === '--stdio' || arg === '--help') {
+    argMap[arg.substring(2)] = 'true';
+  } else if (arg.startsWith('--')) {
+    const [key, value] = arg.substring(2).split('=');
+    if (key && value) {
+      argMap[key] = value;
+    }
+  }
+});
+
+// Show help if requested
+if (argMap.help) {
+  console.log(`
+MCP-Svelte-Docs - A Model Context Protocol server for Svelte 5 documentation
+
+Usage:
+  npx @ronangrant/mcp-svelte-docs [options]
+
+Options:
+  --stdio                      Use stdio for MCP communication (default)
+  --openai-api-key=<key>       OpenAI API key
+  --custom-docs-url=<url>      Custom documentation URL
+  --help                       Show this help message
+
+Environment Variables:
+  OPENAI_API_KEY               OpenAI API key
+  CUSTOM_DOCS_URL              Custom documentation URL
+
+Examples:
+  npx @ronangrant/mcp-svelte-docs --openai-api-key=sk-...
+  npx @ronangrant/mcp-svelte-docs --stdio --openai-api-key=sk-...
+  `);
+  process.exit(0);
+}
+
+// Environment variables for configuration, with command line args taking precedence
+const OPENAI_API_KEY = argMap['openai-api-key'] || process.env.OPENAI_API_KEY;
+const CUSTOM_DOCS_URL = argMap['custom-docs-url'] || process.env.CUSTOM_DOCS_URL;
 
 // Print startup information (will be visible when running with npx)
-console.log('Starting MCP-Svelte5-Docs server...');
+console.log('Starting MCP-Svelte-Docs server...');
 if (CUSTOM_DOCS_URL) {
   console.log(`Using custom documentation URL: ${CUSTOM_DOCS_URL}`);
 }
 
 // Check if OpenAI API key is provided
 if (!OPENAI_API_KEY) {
-  console.error('OpenAI API key is required. Please set the OPENAI_API_KEY environment variable.');
+  console.error('OpenAI API key is required. Please set the OPENAI_API_KEY environment variable or use --openai-api-key=<key>');
   process.exit(1);
 }
 
@@ -54,7 +94,7 @@ class Svelte5DocsServer {
   constructor() {
     this.server = new Server(
       {
-        name: 'mcp-svelte5-docs',
+        name: 'mcp-svelte-docs',
         version: '0.1.0',
       },
       {
@@ -298,7 +338,7 @@ class Svelte5DocsServer {
       await this.init();
       const transport = new StdioServerTransport();
       await this.server.connect(transport);
-      console.log('Svelte5 Docs MCP server running on stdio');
+      console.log('Svelte Docs MCP server running on stdio');
     } catch (error) {
       console.error('Failed to initialize server:', error);
       process.exit(1);

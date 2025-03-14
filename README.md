@@ -54,13 +54,35 @@ If you want to clone and build from source:
 You can run the MCP server directly for testing:
 
 ```bash
+# Using environment variables
 OPENAI_API_KEY="your-openai-api-key" npm start
+
+# Using command-line arguments
+npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key
 ```
 
 To use a custom documentation URL:
 
 ```bash
+# Using environment variables
 OPENAI_API_KEY="your-openai-api-key" CUSTOM_DOCS_URL="https://your-custom-docs-url.com/docs.txt" npm start
+
+# Using command-line arguments
+npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom-docs-url=https://your-custom-docs-url.com/docs.txt
+```
+
+### Integration with Cursor
+
+For Cursor integration, use this command:
+
+```
+npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key
+```
+
+Or with a custom documentation URL:
+
+```
+npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom-docs-url=https://your-custom-docs-url.com/docs.txt
 ```
 
 ### Integration with Claude Desktop
