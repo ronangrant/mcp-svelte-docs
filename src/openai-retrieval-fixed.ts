@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import FormData from 'form-data';
 
 // Vector store name for Svelte documentation
 const VECTOR_STORE_NAME = 'svelte5-documentation';
@@ -76,22 +77,30 @@ export class OpenAIRetrieval {
    */
   private async checkRetrievalApiAccess(): Promise<void> {
     try {
-      // Make a simple request to check access by listing vector stores
-      await (this.client.beta as any).vectorStores.list();
-    } catch (error: any) {
-      console.error('Retrieval API access check error:', error.status, error.message);
+      // Use direct axios call since the SDK method might not be available
+      const headers = {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json'
+      };
       
-      if (error.status === 401) {
+      await axios.get(
+        'https://api.openai.com/v1/vector_stores',
+        { headers }
+      );
+    } catch (error: any) {
+      console.error('Retrieval API access check error:', error.response?.status, error.message);
+      
+      if (error.response?.status === 401) {
         throw new McpError(
           ErrorCode.InvalidParams,
           'Invalid OpenAI API key. Please check your API key and try again.'
         );
-      } else if (error.status === 403) {
+      } else if (error.response?.status === 403) {
         throw new McpError(
           ErrorCode.InvalidParams,
           'Your OpenAI account does not have permission to use the Retrieval API. This feature may require a specific account tier or beta access.'
         );
-      } else if (error.status === 404) {
+      } else if (error.response?.status === 404) {
         throw new McpError(
           ErrorCode.InvalidParams,
           'The Retrieval API endpoint was not found. This feature may not be available yet for your account or is in beta.'
@@ -118,8 +127,18 @@ export class OpenAIRetrieval {
       // Then check if the API key has access to the Retrieval API
       await this.checkRetrievalApiAccess();
       
-      // List vector stores using the SDK
-      const vectorStores = await (this.client.beta as any).vectorStores.list();
+      // Use direct axios call to list vector stores
+      const headers = {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json'
+      };
+      
+      const vectorStoresResponse = await axios.get(
+        'https://api.openai.com/v1/vector_stores',
+        { headers }
+      );
+      
+      const vectorStores = vectorStoresResponse.data;
       
       const existingStore = vectorStores.data.find((store: { name: string }) => store.name === VECTOR_STORE_NAME);
       
@@ -128,11 +147,14 @@ export class OpenAIRetrieval {
         this.vectorStoreId = existingStore.id;
       } else {
         console.log(`Creating new vector store: ${VECTOR_STORE_NAME}`);
-        // Create a new vector store using the SDK
-        const vectorStore = await (this.client.beta as any).vectorStores.create({
-          name: VECTOR_STORE_NAME
-        });
+        // Create a new vector store using direct API call
+        const createResponse = await axios.post(
+          'https://api.openai.com/v1/vector_stores',
+          { name: VECTOR_STORE_NAME },
+          { headers }
+        );
         
+        const vectorStore = createResponse.data;
         this.vectorStoreId = vectorStore.id;
         
         // Download and process the documentation
@@ -191,15 +213,40 @@ export class OpenAIRetrieval {
         // Upload file directly to the vector store
         console.log(`Uploading file to vector store ${this.vectorStoreId}`);
         
-        // Use the uploadAndPoll method from the SDK
-        await (this.client.beta as any).vectorStores.files.uploadAndPoll(
-          this.vectorStoreId,
-          fs.createReadStream(filePath)
+        // Use direct API call to upload file
+        const formData = new FormData();
+        formData.append('file', fs.createReadStream(filePath));
+        formData.append('purpose', 'vector_store');
+        
+        const headers = {
+          'Authorization': `Bearer ${this.apiKey}`,
+          // Content-Type is set automatically by FormData
+        };
+        
+        // First, upload the file to OpenAI
+        const fileUploadResponse = await axios.post(
+          'https://api.openai.com/v1/files',
+          formData,
+          { headers }
+        );
+        
+        const fileId = fileUploadResponse.data.id;
+        
+        // Then, add the file to the vector store
+        await axios.post(
+          `https://api.openai.com/v1/vector_stores/${this.vectorStoreId}/files`,
+          { file_id: fileId },
+          { 
+            headers: {
+              'Authorization': `Bearer ${this.apiKey}`,
+              'Content-Type': 'application/json'
+            }
+          }
         );
         
         console.log('Documentation successfully added to vector store');
       } catch (error: any) {
-        if (error.status === 401) {
+        if (error.response?.status === 401) {
           throw new McpError(
             ErrorCode.InvalidParams,
             'Your OpenAI API key does not have access to the Files API or Retrieval API.'
