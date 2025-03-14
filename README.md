@@ -1,12 +1,12 @@
 # MCP-Svelte-Docs
 
-A Model Context Protocol (MCP) server that enables semantic search of Svelte 5 documentation using OpenAI's Retrieval API. This server allows AI assistants like Claude to search through Svelte 5 documentation using natural language queries.
+A Model Context Protocol (MCP) server that enables semantic search of Svelte 5 documentation using OpenAI's Retrieval API. This server allows AI assistants like Claude and Cursor to search through Svelte 5 documentation using natural language queries.
 
 ## Features
 
 - Semantic search through Svelte 5 documentation
 - Automatic documentation retrieval and vectorization
-- Integration with Claude Desktop and other MCP hosts
+- Integration with Claude Desktop, Cursor, and other MCP hosts
 - Reuse of existing vector stores for efficiency
 - Support for custom documentation URLs
 
@@ -73,17 +73,19 @@ npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom-do
 
 ### Integration with Cursor
 
-For Cursor integration, use this command:
+For Cursor integration, add a new MCP tool with the following command:
 
 ```
-npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key
+npx -y @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key
 ```
 
 Or with a custom documentation URL:
 
 ```
-npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom-docs-url=https://your-custom-docs-url.com/docs.txt
+npx -y @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom-docs-url=https://your-custom-docs-url.com/docs.txt
 ```
+
+![Cursor MCP Integration](https://github.com/ronangrant/mcp-svelte-docs/raw/main/cursor-integration.png)
 
 ### Integration with Claude Desktop
 
