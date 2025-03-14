@@ -85,8 +85,6 @@ Or with a custom documentation URL:
 npx -y @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom-docs-url=https://your-custom-docs-url.com/docs.txt
 ```
 
-![Cursor MCP Integration](https://github.com/ronangrant/mcp-svelte-docs/raw/main/cursor-integration.png)
-
 ### Integration with Claude Desktop
 
 1. Edit your Claude Desktop configuration file:
