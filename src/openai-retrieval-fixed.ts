@@ -7,7 +7,7 @@ import FormData from 'form-data';
 
 // Vector store name for Svelte documentation
 const VECTOR_STORE_NAME = 'svelte5-documentation';
-const DEFAULT_DOCS_URL = 'https://svelte.dev/docs/svelte/llms.txt';
+const DEFAULT_DOCS_URL = 'https://svelte.dev/llms-full.txt';
 const DOCS_FILENAME = 'svelte5-docs.txt';
 
 /**

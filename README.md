@@ -4,8 +4,8 @@ A Model Context Protocol (MCP) server that enables semantic search of Svelte 5 d
 
 ## Features
 
-- Semantic search through Svelte 5 documentation
-- Automatic documentation retrieval and vectorization
+- Semantic search through complete Svelte 5 documentation
+- Automatic documentation retrieval and vectorization using the full Svelte docs
 - Integration with Claude Desktop, Cursor, and other MCP hosts
 - Reuse of existing vector stores for efficiency
 - Support for custom documentation URLs
