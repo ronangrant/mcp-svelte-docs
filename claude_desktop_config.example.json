@@ -6,8 +6,7 @@
         "/path/to/your/mcp-svelte-docs/build/index.js"
       ],
       "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "CUSTOM_DOCS_URL": "https://your-custom-docs-url.com/docs.txt"
+        "OPENAI_API_KEY": "your-openai-api-key"
       }
     },
     "svelte5docs-npx": {
@@ -17,8 +16,7 @@
         "@ronangrant/mcp-svelte-docs"
       ],
       "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "CUSTOM_DOCS_URL": "https://your-custom-docs-url.com/docs.txt"
+        "OPENAI_API_KEY": "your-openai-api-key"
       }
     }
   }

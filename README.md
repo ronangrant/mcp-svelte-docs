@@ -8,7 +8,6 @@ A Model Context Protocol (MCP) server that enables semantic search of Svelte 5 d
 - Automatic documentation retrieval and vectorization using the full Svelte docs
 - Integration with Claude Desktop, Cursor, and other MCP hosts
 - Reuse of existing vector stores for efficiency
-- Support for custom documentation URLs
 
 ## Requirements
 
@@ -61,28 +60,12 @@ OPENAI_API_KEY="your-openai-api-key" npm start
 npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key
 ```
 
-To use a custom documentation URL:
-
-```bash
-# Using environment variables
-OPENAI_API_KEY="your-openai-api-key" CUSTOM_DOCS_URL="https://your-custom-docs-url.com/docs.txt" npm start
-
-# Using command-line arguments
-npx @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom-docs-url=https://your-custom-docs-url.com/docs.txt
-```
-
 ### Integration with Cursor
 
 For Cursor integration, add a new MCP tool with the following command:
 
 ```
 npx -y @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key
-```
-
-Or with a custom documentation URL:
-
-```
-npx -y @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom-docs-url=https://your-custom-docs-url.com/docs.txt
 ```
 
 ### Integration with Claude Desktop
@@ -100,8 +83,7 @@ npx -y @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom
            "/path/to/your/mcp-svelte-docs/build/index.js"
          ],
          "env": {
-           "OPENAI_API_KEY": "your-openai-api-key",
-           "CUSTOM_DOCS_URL": "https://your-custom-docs-url.com/docs.txt" // Optional
+           "OPENAI_API_KEY": "your-openai-api-key"
          }
        }
      }
@@ -119,8 +101,7 @@ npx -y @ronangrant/mcp-svelte-docs --openai-api-key=your-openai-api-key --custom
            "@ronangrant/mcp-svelte-docs"
          ],
          "env": {
-           "OPENAI_API_KEY": "your-openai-api-key",
-           "CUSTOM_DOCS_URL": "https://your-custom-docs-url.com/docs.txt" // Optional
+           "OPENAI_API_KEY": "your-openai-api-key"
          }
        }
      }
@@ -136,7 +117,6 @@ For other MCP hosts, consult their documentation for how to configure external M
 - The command to run the server (`node /path/to/build/index.js`)
 - The necessary environment variables:
   - `OPENAI_API_KEY` (required)
-  - `CUSTOM_DOCS_URL` (optional)
 
 ## Available Tools
 
@@ -151,7 +131,7 @@ The MCP server provides the following tool to AI assistants:
 ## How It Works
 
 1. The server initializes and checks if a vector store for Svelte 5 documentation already exists in your OpenAI account.
-2. If it doesn't exist, it creates a new vector store, downloads the Svelte 5 documentation (from the default URL or a custom URL if provided), and adds it to the vector store.
+2. If it doesn't exist, it creates a new vector store, downloads the Svelte 5 documentation, and adds it to the vector store.
 3. When you search, it uses OpenAI's Retrieval API to find the most relevant documentation based on your query.
 4. The results are returned with their relevance scores.
 
@@ -170,11 +150,6 @@ The MCP server provides the following tool to AI assistants:
 3. **Configuration Path Issues**
    - Ensure paths in your configuration are absolute and correct
    - Verify the Node.js path is correct (use `which node` to find it)
-
-4. **Custom Documentation URL Issues**
-   - Ensure the URL points to a valid text file
-   - The text file should be formatted in a way that's compatible with OpenAI's Retrieval API
-   - Check that the URL is accessible from your server
 
 ## License
 

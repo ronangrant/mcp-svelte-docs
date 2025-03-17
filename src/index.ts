@@ -36,12 +36,10 @@ Usage:
 Options:
   --stdio                      Use stdio for MCP communication (default)
   --openai-api-key=<key>       OpenAI API key
-  --custom-docs-url=<url>      Custom documentation URL
   --help                       Show this help message
 
 Environment Variables:
   OPENAI_API_KEY               OpenAI API key
-  CUSTOM_DOCS_URL              Custom documentation URL
 
 Examples:
   npx @ronangrant/mcp-svelte-docs --openai-api-key=sk-...
@@ -52,13 +50,9 @@ Examples:
 
 // Environment variables for configuration, with command line args taking precedence
 const OPENAI_API_KEY = argMap['openai-api-key'] || process.env.OPENAI_API_KEY;
-const CUSTOM_DOCS_URL = argMap['custom-docs-url'] || process.env.CUSTOM_DOCS_URL;
 
 // Print startup information (will be visible when running with npx)
 console.log('Starting MCP-Svelte-Docs server...');
-if (CUSTOM_DOCS_URL) {
-  console.log(`Using custom documentation URL: ${CUSTOM_DOCS_URL}`);
-}
 
 // Check if OpenAI API key is provided
 if (!OPENAI_API_KEY) {
@@ -104,8 +98,8 @@ class Svelte5DocsServer {
       }
     );
     
-    // Initialize OpenAI Retrieval with the API key and custom docs URL if provided
-    this.openaiRetrieval = new OpenAIRetrieval(OPENAI_API_KEY as string, CUSTOM_DOCS_URL);
+    // Initialize OpenAI Retrieval with the API key
+    this.openaiRetrieval = new OpenAIRetrieval(OPENAI_API_KEY as string);
     
     // Error handling
     this.server.onerror = (error) => console.error('[MCP Error]', error);

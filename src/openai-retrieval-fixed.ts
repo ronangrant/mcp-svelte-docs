@@ -7,7 +7,7 @@ import FormData from 'form-data';
 
 // Vector store name for Svelte documentation
 const VECTOR_STORE_NAME = 'svelte5-documentation';
-const DEFAULT_DOCS_URL = 'https://svelte.dev/llms-full.txt';
+const DOCS_URL = 'https://svelte.dev/llms-full.txt';
 const DOCS_FILENAME = 'svelte5-docs.txt';
 
 /**
@@ -19,14 +19,12 @@ export class OpenAIRetrieval {
   private vectorStoreId: string | null = null;
   private initialized = false;
   private apiKey: string;
-  private docsUrl: string;
 
   /**
    * Create a new OpenAIRetrieval instance
    * @param apiKey OpenAI API key
-   * @param customDocsUrl Optional custom documentation URL
    */
-  constructor(apiKey: string, customDocsUrl?: string) {
+  constructor(apiKey: string) {
     if (!apiKey) {
       throw new McpError(
         ErrorCode.InvalidParams,
@@ -40,7 +38,6 @@ export class OpenAIRetrieval {
     }
     
     this.apiKey = apiKey;
-    this.docsUrl = customDocsUrl || DEFAULT_DOCS_URL;
     this.client = new OpenAI({ apiKey });
   }
 
@@ -194,10 +191,10 @@ export class OpenAIRetrieval {
       
       const filePath = path.join(tempDir, DOCS_FILENAME);
       
-      // Download the documentation from the configured URL
-      console.log(`Downloading documentation from ${this.docsUrl}`);
+      // Download the documentation from the Svelte docs URL
+      console.log(`Downloading documentation from ${DOCS_URL}`);
       try {
-        const response = await axios.get(this.docsUrl);
+        const response = await axios.get(DOCS_URL);
         fs.writeFileSync(filePath, response.data);
       } catch (error: any) {
         throw new McpError(
