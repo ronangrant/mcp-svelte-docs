@@ -140,16 +140,13 @@ For other MCP hosts, consult their documentation for how to configure external M
 
 ## Available Tools
 
-The MCP server provides the following tools to AI assistants:
+The MCP server provides the following tool to AI assistants:
 
 1. `search_svelte_docs`
    - Search through Svelte 5 documentation
    - Parameters:
      - `query`: Search query
      - `limit` (optional): Maximum number of results to return (default: 5)
-
-2. `list_docs_sources`
-   - List all Svelte 5 documentation sources
 
 ## How It Works
 

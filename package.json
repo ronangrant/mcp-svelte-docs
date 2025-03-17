@@ -1,6 +1,6 @@
 {
   "name": "@ronangrant/mcp-svelte-docs",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A Model Context Protocol server for searching Svelte 5 documentation using OpenAI's Retrieval API",
   "private": false,
   "type": "module",

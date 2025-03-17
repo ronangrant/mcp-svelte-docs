@@ -169,14 +169,6 @@ class Svelte5DocsServer {
             required: ['query'],
           },
         },
-        {
-          name: 'list_docs_sources',
-          description: 'List all Svelte 5 documentation sources',
-          inputSchema: {
-            type: 'object',
-            properties: {},
-          },
-        },
       ],
     }));
 
@@ -184,8 +176,6 @@ class Svelte5DocsServer {
       switch (request.params.name) {
         case 'search_svelte_docs':
           return this.handleSearchDocumentation(request.params.arguments);
-        case 'list_docs_sources':
-          return this.handleListSources();
         default:
           throw new McpError(
             ErrorCode.MethodNotFound,
@@ -249,65 +239,6 @@ class Svelte5DocsServer {
       
       // Format the error message for better user experience
       let errorMessage = 'Search failed: ';
-      
-      if (error instanceof McpError) {
-        errorMessage += error.message;
-      } else if (error.response && error.response.data && error.response.data.error) {
-        // Handle OpenAI API error format
-        errorMessage += error.response.data.error.message || error.message;
-      } else {
-        errorMessage += error.message || String(error);
-      }
-      
-      return {
-        content: [
-          {
-            type: 'text',
-            text: errorMessage,
-          },
-        ],
-        isError: true,
-      };
-    }
-  }
-
-  /**
-   * Handle the list_docs_sources tool request
-   */
-  private async handleListSources() {
-    try {
-      // Use OpenAI Retrieval API
-      const files = await this.openaiRetrieval.listFiles();
-      
-      if (!files.data || files.data.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'No Svelte 5 documentation sources found.',
-            },
-          ],
-        };
-      }
-      
-      const sourcesList = files.data.map((file: any) => {
-        const filename = file.filename || file.name || file.id;
-        return `- ${filename} (ID: ${file.id})`;
-      }).join('\n');
-      
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Svelte 5 Documentation Sources:\n\n${sourcesList}`,
-          },
-        ],
-      };
-    } catch (error: any) {
-      console.error('List sources error:', error);
-      
-      // Format the error message for better user experience
-      let errorMessage = 'Failed to list sources: ';
       
       if (error instanceof McpError) {
         errorMessage += error.message;
