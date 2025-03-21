@@ -9,6 +9,34 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { OpenAIRetrieval } from './openai-retrieval-fixed.js';
 
+// Helper functions for logging to stderr to avoid interfering with MCP protocol
+function log(message: string) {
+  process.stderr.write(message + '\n');
+}
+
+function logError(message: string, error?: any) {
+  let errorMsg = message;
+  if (error) {
+    if (error.message) errorMsg += ` ${error.message}`;
+    else errorMsg += ` ${error}`;
+  }
+  process.stderr.write(`ERROR: ${errorMsg}\n`);
+}
+
+// Redirect console output to stderr to avoid interfering with MCP protocol
+const originalConsoleLog = console.log;
+const originalConsoleInfo = console.info;
+const originalConsoleError = console.error;
+console.log = (...args) => {
+  process.stderr.write(args.join(' ') + '\n');
+};
+console.info = (...args) => {
+  process.stderr.write(args.join(' ') + '\n');
+};
+console.error = (...args) => {
+  process.stderr.write('ERROR: ' + args.join(' ') + '\n');
+};
+
 // Parse command line arguments
 const args = process.argv.slice(2);
 const argMap: Record<string, string> = {};
@@ -27,7 +55,7 @@ args.forEach(arg => {
 
 // Show help if requested
 if (argMap.help) {
-  console.log(`
+  log(`
 MCP-Svelte-Docs - A Model Context Protocol server for Svelte 5 documentation
 
 Usage:
@@ -52,11 +80,11 @@ Examples:
 const OPENAI_API_KEY = argMap['openai-api-key'] || process.env.OPENAI_API_KEY;
 
 // Print startup information (will be visible when running with npx)
-console.log('Starting MCP-Svelte-Docs server...');
+log('Starting MCP-Svelte-Docs server...');
 
 // Check if OpenAI API key is provided
 if (!OPENAI_API_KEY) {
-  console.error('OpenAI API key is required. Please set the OPENAI_API_KEY environment variable or use --openai-api-key=<key>');
+  logError('OpenAI API key is required. Please set the OPENAI_API_KEY environment variable or use --openai-api-key=<key>');
   process.exit(1);
 }
 
@@ -102,7 +130,7 @@ class Svelte5DocsServer {
     this.openaiRetrieval = new OpenAIRetrieval(OPENAI_API_KEY as string);
     
     // Error handling
-    this.server.onerror = (error) => console.error('[MCP Error]', error);
+    this.server.onerror = (error) => logError('[MCP Error]', error);
     process.on('SIGINT', async () => {
       await this.cleanup();
       process.exit(0);
@@ -123,11 +151,11 @@ class Svelte5DocsServer {
     try {
       // Initialize OpenAI Retrieval
       await this.openaiRetrieval.initialize();
-      console.log('OpenAI Retrieval initialized successfully');
+      log('OpenAI Retrieval initialized successfully');
       
       this.setupToolHandlers();
     } catch (error) {
-      console.error('Failed to initialize OpenAI Retrieval:', error);
+      logError('Failed to initialize OpenAI Retrieval:', error);
       if (error instanceof McpError) {
         throw error;
       }
@@ -229,7 +257,7 @@ class Svelte5DocsServer {
         ],
       };
     } catch (error: any) {
-      console.error('Search error:', error);
+      logError('Search error:', error);
       
       // Format the error message for better user experience
       let errorMessage = 'Search failed: ';
@@ -263,9 +291,9 @@ class Svelte5DocsServer {
       await this.init();
       const transport = new StdioServerTransport();
       await this.server.connect(transport);
-      console.log('Svelte Docs MCP server running on stdio');
+      log('Svelte Docs MCP server running on stdio');
     } catch (error) {
-      console.error('Failed to initialize server:', error);
+      logError('Failed to initialize server:', error);
       process.exit(1);
     }
   }

@@ -11,6 +11,26 @@ const DOCS_URL = 'https://svelte.dev/llms-full.txt';
 const DOCS_FILENAME = 'svelte5-docs.txt';
 
 /**
+ * Helper function to log to stderr to avoid interfering with MCP protocol
+ */
+function log(message: string) {
+  process.stderr.write(message + '\n');
+}
+
+/**
+ * Helper function for error logging to stderr
+ */
+function logError(message: string, error?: any) {
+  let errorMsg = message;
+  if (error) {
+    if (error.status) errorMsg += ` ${error.status}`;
+    if (error.message) errorMsg += ` ${error.message}`;
+    else errorMsg += ` ${error}`;
+  }
+  process.stderr.write(`ERROR: ${errorMsg}\n`);
+}
+
+/**
  * Class for interacting with OpenAI's Retrieval API
  * Handles vector store creation, document processing, and semantic search
  */
@@ -34,7 +54,7 @@ export class OpenAIRetrieval {
     
     // Validate API key format
     if (!apiKey.startsWith('sk-')) {
-      console.warn('Warning: The provided OpenAI API key does not start with "sk-". This may not be a valid OpenAI API key.');
+      log('Warning: The provided OpenAI API key does not start with "sk-". This may not be a valid OpenAI API key.');
     }
     
     this.apiKey = apiKey;
@@ -48,7 +68,7 @@ export class OpenAIRetrieval {
     try {
       await this.client.models.list();
     } catch (error: any) {
-      console.error('API key validation error:', error.status, error.message);
+      logError('API key validation error:', error);
       
       if (error.status === 401) {
         throw new McpError(
@@ -85,7 +105,7 @@ export class OpenAIRetrieval {
         { headers }
       );
     } catch (error: any) {
-      console.error('Retrieval API access check error:', error.response?.status, error.message);
+      logError('Retrieval API access check error:', error.response?.status ? { status: error.response.status, message: error.message } : error);
       
       if (error.response?.status === 401) {
         throw new McpError(
@@ -140,10 +160,10 @@ export class OpenAIRetrieval {
       const existingStore = vectorStores.data.find((store: { name: string }) => store.name === VECTOR_STORE_NAME);
       
       if (existingStore) {
-        console.log(`Found existing vector store: ${existingStore.id}`);
+        log(`Found existing vector store: ${existingStore.id}`);
         this.vectorStoreId = existingStore.id;
       } else {
-        console.log(`Creating new vector store: ${VECTOR_STORE_NAME}`);
+        log(`Creating new vector store: ${VECTOR_STORE_NAME}`);
         // Create a new vector store using direct API call
         const createResponse = await axios.post(
           'https://api.openai.com/v1/vector_stores',
@@ -160,7 +180,7 @@ export class OpenAIRetrieval {
       
       this.initialized = true;
     } catch (error) {
-      console.error('Failed to initialize OpenAI vector store:', error);
+      logError('Failed to initialize OpenAI vector store:', error);
       if (error instanceof McpError) {
         throw error;
       }
@@ -192,7 +212,7 @@ export class OpenAIRetrieval {
       const filePath = path.join(tempDir, DOCS_FILENAME);
       
       // Download the documentation from the Svelte docs URL
-      console.log(`Downloading documentation from ${DOCS_URL}`);
+      log(`Downloading documentation from ${DOCS_URL}`);
       try {
         const response = await axios.get(DOCS_URL);
         fs.writeFileSync(filePath, response.data);
@@ -204,11 +224,11 @@ export class OpenAIRetrieval {
       }
       
       // Upload to OpenAI
-      console.log('Uploading documentation to OpenAI');
+      log('Uploading documentation to OpenAI');
       
       try {
         // Upload file directly to the vector store
-        console.log(`Uploading file to vector store ${this.vectorStoreId}`);
+        log(`Uploading file to vector store ${this.vectorStoreId}`);
         
         // Use direct API call to upload file
         const formData = new FormData();
@@ -241,7 +261,7 @@ export class OpenAIRetrieval {
           }
         );
         
-        console.log('Documentation successfully added to vector store');
+        log('Documentation successfully added to vector store');
       } catch (error: any) {
         if (error.response?.status === 401) {
           throw new McpError(
@@ -256,7 +276,7 @@ export class OpenAIRetrieval {
         }
       }
     } catch (error) {
-      console.error('Failed to process documentation:', error);
+      logError('Failed to process documentation:', error);
       if (error instanceof McpError) {
         throw error;
       }
@@ -303,7 +323,7 @@ export class OpenAIRetrieval {
       
       return searchResponse.data;
     } catch (error: any) {
-      console.error('Search failed:', error.response?.status, error.message);
+      logError('Search failed:', error.response?.status ? { status: error.response.status, message: error.message } : error);
       
       if (error.response?.status === 401) {
         throw new McpError(
@@ -353,7 +373,7 @@ export class OpenAIRetrieval {
       
       return filesResponse.data;
     } catch (error: any) {
-      console.error('Failed to list files:', error.response?.status, error.message);
+      logError('Failed to list files:', error.response?.status ? { status: error.response.status, message: error.message } : error);
       
       if (error.response?.status === 401) {
         throw new McpError(
